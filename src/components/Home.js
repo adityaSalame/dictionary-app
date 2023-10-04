@@ -6,6 +6,7 @@ import { failed_to_fetch } from "../redux/actions/action";
 import axios from "axios";
 function Home(){
     const data=useSelector(state=> state.words_array);
+    const [loading,setLoading]=useState(false);
     const [wordmeaning,setWordmeaning]=useState([]);
     const [searchedWord,setSearchedWord]=useState("");
     //let wordmeaning=[];
@@ -13,6 +14,7 @@ function Home(){
     const dispatch = useDispatch()
 
     function displayMeaning(){
+        setLoading(true);
         dispatch(addHistory(newWord));
         meaning(newWord)
         console.log(newWord);
@@ -34,11 +36,13 @@ function Home(){
             const means=await axios.get(url);
            
             setWordmeaning(means.data);
+            setLoading(false);
             console.log(wordmeaning,means.data);
             // dispatch(addHistory(word))
             }
             catch(error){
                 // dispatch(failed_to_fetch(error));
+                setLoading(false);
                 console.log("no results");
             }
         
@@ -88,6 +92,7 @@ function Home(){
                 
                 
                 <h1>{searchedWord}</h1>
+                {loading && <div className="loader-container"><div class="loader"></div></div>}
                 <div>
                     {wordmeaning.length !== 0 && wordmeaning.map((ans, idx) => (
                     <div key={idx}>
