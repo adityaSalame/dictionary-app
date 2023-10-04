@@ -1,5 +1,6 @@
 import React from "react";
 import { useSelector } from "react-redux/es/hooks/useSelector";
+import { Link } from "react-router-dom";
 
 function History(){
     const history=useSelector((state)=>state.words_array);
@@ -11,7 +12,7 @@ function History(){
                 <ul>
                 {history.map((word,idx)=>(
                     <li key={idx}>
-                        <a href={`/word/${word}`}>{word}</a>
+                       <Link to={`/word/${word}`}>{word}</Link>
                     </li>
                 ))}
                 </ul>
