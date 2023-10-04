@@ -10,7 +10,9 @@ function History(){
             <div className="searched">
                 <ul>
                 {history.map((word,idx)=>(
-                    <li key={idx}>{word}</li>
+                    <li key={idx}>
+                        <a href={`/word/${word}`}>{word}</a>
+                    </li>
                 ))}
                 </ul>
             </div>
