@@ -13,6 +13,7 @@ function Home(){
     const dispatch = useDispatch()
 
     function displayMeaning(){
+        dispatch(addHistory(newWord));
         meaning(newWord)
         console.log(newWord);
        let history = JSON.parse(localStorage.getItem("history"));
@@ -66,7 +67,7 @@ function Home(){
         return(
             <div>
                 <div>{item.text}</div>
-                <audio useRef="audio_tag" src={item.audio} controls/>
+                <audio src={item.audio} controls/>
             </div>
         )
        }
@@ -78,13 +79,7 @@ function Home(){
 
     return(
         <div>
-            <div className="navbar">
-                <div className="appname"><h1>Dictonary App</h1></div>
-                <div className="links">
-                    <div>Home</div>
-                    <div>History</div>
-                </div>
-            </div>
+           
             <div className="search-container">
                 <input type="text" placeholder="Search" onChange={(e)=>word(e)}/>
                 <button onClick={displayMeaning}>Search</button>
