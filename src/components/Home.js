@@ -7,6 +7,7 @@ import axios from "axios";
 function Home(){
     const data=useSelector(state=> state.words_array);
     const [wordmeaning,setWordmeaning]=useState([]);
+    const [searchedWord,setSearchedWord]=useState("");
     //let wordmeaning=[];
     let newWord="";
     const dispatch = useDispatch()
@@ -26,13 +27,13 @@ function Home(){
     }
 
     async function meaning(newword){
-        
+        setSearchedWord(newWord);
             try{
                 const url="https://api.dictionaryapi.dev/api/v2/entries/en/"+newword;
             const means=await axios.get(url);
            
             setWordmeaning(means.data);
-            console.log(wordmeaning);
+            console.log(wordmeaning,means.data);
             // dispatch(addHistory(word))
             }
             catch(error){
@@ -42,12 +43,36 @@ function Home(){
         
     }
 
-    function displayDefinitions(array){
-        let str="";
-        for(let i=0;i<array.length;i++){
-            str+=array[i].definition;
+    const displayDefinitions=(meaningItem)=>{
+        console.log(meaningItem);
+        if (meaningItem.definitions && meaningItem.definitions.length > 0) {
+            return meaningItem.definitions.map((definition, idx) => (
+                <div key={idx}>
+                    
+                    
+                    <div>{definition.definition}</div>
+                    
+                </div>
+            ));
+        } else {
+            return <div>No definitions available.</div>;
         }
-        return str;
+        
+    }
+
+    const displayPhonetics=(item)=>{
+       console.log(item);
+       if(item.audio){
+        return(
+            <div>
+                <div>{item.text}</div>
+                <audio useRef="audio_tag" src={item.audio} controls/>
+            </div>
+        )
+       }
+       else{
+        return (<div>here{item.text}</div>)
+       }
     }
     
 
@@ -65,16 +90,42 @@ function Home(){
                 <button onClick={displayMeaning}>Search</button>
             </div>
             <div className="content">
-                hiii  phonetics, meanings, part of speech, definitions, and audio pronunciations.
-                {wordmeaning.length !== 0 && wordmeaning.map((ans, idx) => (
-                    <div key={idx}>
-                        <div>{newWord}</div>
-                        <div>{ans.phonetic}</div>
-                        <div>{ans.meanings.partOfSpeech}</div>
-                        <div>{displayDefinitions(ans.definitions)}</div>
-                    </div>
-                ))}
                 
+                
+                <h1>{searchedWord}</h1>
+                <div>
+                    {wordmeaning.length !== 0 && wordmeaning.map((ans, idx) => (
+                    <div key={idx}>
+                        
+                        {ans.phonetics && ans.phonetics.length>0?(
+                            ans.phonetics.map((item,idx)=>(
+                                <div key={idx}>
+                                    {displayPhonetics(item)}
+                                </div>
+                            ))
+                        ):(
+                            <div>No audio available</div>
+                        )}
+                        <div>{ans.meanings.partOfSpeech}</div>
+                        
+                        {ans.meanings && ans.meanings.length > 0 ? (
+                            ans.meanings.map((meaningItem, index) => (
+                                <div key={index}>
+                                    <div><h3>Part of speech:</h3>
+                                    {meaningItem.partOfSpeech}</div>
+                                    <h3>Definitions:</h3>
+                                    {displayDefinitions(meaningItem)}
+                                    
+                                </div>
+                            ))
+                        ) : (
+                            <div>No meanings available.</div>
+                        )}
+                        
+                    </div>
+                    
+                    ))}
+                </div>
 
             </div>
 
